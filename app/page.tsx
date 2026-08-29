@@ -1,69 +1,53 @@
-import Image from "next/image";
+import { Suspense } from 'react';
+import { Metadata } from 'next';
+import { HeroSection } from '@/components/HeroSection';
+import { MainCalculator } from '@/components/MainCalculator';
+import { FAQ } from '@/components/FAQ';
+import { RelatedTools } from '@/components/RelatedTools';
 
-export default function Home() {
+export const metadata: Metadata = {
+  title: 'AI LLM Token & Cost Calculator | Fast & Trustworthy LLM Pricing Tool',
+  description:
+    'Free developer utility to calculate, compare, and forecast LLM API billing costs for OpenAI, Anthropic Claude, Google Gemini, DeepSeek, and Meta Llama.',
+  alternates: {
+    canonical: 'https://llmcalc.com/',
+  },
+};
+
+const homepageFaqs = [
+  {
+    question: 'How are LLM API costs calculated?',
+    answer:
+      'LLM API costs are billed based on token usage. Input tokens (your prompt and context) and output tokens (the generated response) are charged at different rates per 1,000,000 tokens specified by each provider.',
+  },
+  {
+    question: 'Why are output tokens more expensive than input tokens?',
+    answer:
+      'Output tokens require sequential autoregressive generation by neural networks on GPUs, whereas input tokens can be processed in parallel during the prefill phase.',
+  },
+  {
+    question: 'Are my prompts sent to any external server?',
+    answer:
+      'No. LLMCalc operates 100% client-side in your browser. No prompts, text, or API keys are ever transmitted anywhere.',
+  },
+];
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+    <div className="space-y-16">
+      {/* 1. Hero Landing Section */}
+      <HeroSection />
+
+      {/* 2. Main Interactive Calculator Section */}
+      <Suspense fallback={<div className="p-8 text-center text-sm font-mono text-slate-400">Loading interactive calculator engine...</div>}>
+        <MainCalculator />
+      </Suspense>
+
+      {/* 3. FAQ & Related Tools Footer Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-white/10">
+        <FAQ items={homepageFaqs} />
+        <RelatedTools currentPath="/" />
+      </div>
     </div>
   );
-}
+};

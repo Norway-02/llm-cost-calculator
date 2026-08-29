@@ -1,0 +1,536 @@
+[
+  {
+    "id": "gpt-4o",
+    "provider": "OpenAI",
+    "modelName": "GPT-4o",
+    "currency": "USD",
+    "inputPricePerMillion": 2.50,
+    "outputPricePerMillion": 10.00,
+    "effectiveDate": "2024-08-01",
+    "sourceUrl": "https://openai.com/api/pricing/",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://platform.openai.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "capabilities": {
+      "vision": true,
+      "audio": true,
+      "reasoning": false
+    },
+    "pricingTiers": {
+      "cachedInput": 1.25,
+      "batch": {
+        "input": 1.25,
+        "output": 5.00
+      }
+    }
+  },
+  {
+    "id": "gpt-4o-mini",
+    "provider": "OpenAI",
+    "modelName": "GPT-4o mini",
+    "currency": "USD",
+    "inputPricePerMillion": 0.15,
+    "outputPricePerMillion": 0.60,
+    "effectiveDate": "2024-07-18",
+    "sourceUrl": "https://openai.com/api/pricing/",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://platform.openai.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "supported",
+    "capabilities": {
+      "vision": true,
+      "audio": false,
+      "reasoning": false
+    },
+    "pricingTiers": {
+      "cachedInput": 0.075,
+      "batch": {
+        "input": 0.075,
+        "output": 0.30
+      }
+    }
+  },
+  {
+    "id": "o1",
+    "provider": "OpenAI",
+    "modelName": "o1",
+    "currency": "USD",
+    "inputPricePerMillion": 15.00,
+    "outputPricePerMillion": 60.00,
+    "effectiveDate": "2024-12-05",
+    "sourceUrl": "https://openai.com/api/pricing/",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://platform.openai.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "supported",
+    "capabilities": {
+      "vision": true,
+      "audio": false,
+      "reasoning": true
+    },
+    "pricingTiers": {
+      "cachedInput": 7.50,
+      "batch": {
+        "input": 7.50,
+        "output": 30.00
+      }
+    }
+  },
+  {
+    "id": "o3-mini",
+    "provider": "OpenAI",
+    "modelName": "o3-mini",
+    "currency": "USD",
+    "inputPricePerMillion": 1.10,
+    "outputPricePerMillion": 4.40,
+    "effectiveDate": "2025-01-31",
+    "sourceUrl": "https://openai.com/api/pricing/",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://platform.openai.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "supported",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": true
+    },
+    "pricingTiers": {
+      "cachedInput": 0.55,
+      "batch": {
+        "input": 0.55,
+        "output": 2.20
+      }
+    }
+  },
+  {
+    "id": "claude-sonnet-5",
+    "provider": "Anthropic",
+    "modelName": "Claude Sonnet 5",
+    "currency": "USD",
+    "inputPricePerMillion": 2.00,
+    "outputPricePerMillion": 10.00,
+    "effectiveDate": "2026-08-24",
+    "sourceUrl": "https://www.anthropic.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.anthropic.com/en/docs/about-claude/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "pricingSchedule": [
+      {
+        "effectiveFrom": "2026-09-01",
+        "inputPricePerMillion": 3.00,
+        "outputPricePerMillion": 15.00,
+        "notes": "Standard rate effective Sept 1, 2026 after intro discount"
+      }
+    ],
+    "capabilities": {
+      "vision": true,
+      "audio": false,
+      "reasoning": true
+    },
+    "pricingTiers": {
+      "cachedInput": 0.20,
+      "batch": {
+        "input": 1.00,
+        "output": 5.00
+      }
+    }
+  },
+  {
+    "id": "claude-3-7-sonnet",
+    "provider": "Anthropic",
+    "modelName": "Claude 3.7 Sonnet",
+    "currency": "USD",
+    "inputPricePerMillion": 3.00,
+    "outputPricePerMillion": 15.00,
+    "effectiveDate": "2025-02-24",
+    "sourceUrl": "https://www.anthropic.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.anthropic.com/en/docs/about-claude/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "legacy",
+    "availability": "available",
+    "recommendation": "legacy",
+    "replacementModelId": "claude-sonnet-5",
+    "capabilities": {
+      "vision": true,
+      "audio": false,
+      "reasoning": true
+    },
+    "pricingTiers": {
+      "cachedInput": 0.30,
+      "batch": {
+        "input": 1.50,
+        "output": 7.50
+      }
+    }
+  },
+  {
+    "id": "claude-3-5-haiku",
+    "provider": "Anthropic",
+    "modelName": "Claude 3.5 Haiku",
+    "currency": "USD",
+    "inputPricePerMillion": 0.80,
+    "outputPricePerMillion": 4.00,
+    "effectiveDate": "2024-10-22",
+    "sourceUrl": "https://www.anthropic.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.anthropic.com/en/docs/about-claude/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "supported",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": false
+    },
+    "pricingTiers": {
+      "cachedInput": 0.08,
+      "batch": {
+        "input": 0.40,
+        "output": 2.00
+      }
+    }
+  },
+  {
+    "id": "claude-3-opus",
+    "provider": "Anthropic",
+    "modelName": "Claude 3 Opus",
+    "currency": "USD",
+    "inputPricePerMillion": 15.00,
+    "outputPricePerMillion": 75.00,
+    "effectiveDate": "2024-03-04",
+    "sourceUrl": "https://www.anthropic.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.anthropic.com/en/docs/about-claude/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "legacy",
+    "availability": "available",
+    "recommendation": "legacy",
+    "replacementModelId": "claude-sonnet-5",
+    "capabilities": {
+      "vision": true,
+      "audio": false,
+      "reasoning": false
+    },
+    "pricingTiers": {
+      "cachedInput": 1.50,
+      "batch": {
+        "input": 7.50,
+        "output": 37.50
+      }
+    }
+  },
+  {
+    "id": "gemini-3.7-flash",
+    "provider": "Google",
+    "modelName": "Gemini 3.7 Flash",
+    "currency": "USD",
+    "inputPricePerMillion": 0.75,
+    "outputPricePerMillion": 3.75,
+    "effectiveDate": "2026-02-24",
+    "sourceUrl": "https://ai.google.dev/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://ai.google.dev/gemini-api/docs/models/gemini",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "pricingSchedule": [
+      {
+        "effectiveFrom": "2027-01-01",
+        "inputPricePerMillion": 1.50,
+        "outputPricePerMillion": 7.50,
+        "notes": "Scheduled price tier effective Jan 1, 2027"
+      }
+    ],
+    "capabilities": {
+      "vision": true,
+      "audio": true,
+      "reasoning": true
+    },
+    "pricingTiers": {
+      "cachedInput": 0.1875
+    }
+  },
+  {
+    "id": "gemini-1-5-pro",
+    "provider": "Google",
+    "modelName": "Gemini 1.5 Pro (Shutdown)",
+    "currency": "USD",
+    "inputPricePerMillion": 1.25,
+    "outputPricePerMillion": 5.00,
+    "effectiveDate": "2024-05-14",
+    "sourceUrl": "https://ai.google.dev/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "status": "stale",
+    "lifecycle": "shutdown",
+    "availability": "shutdown",
+    "recommendation": "none",
+    "shutdownDate": "2025-09-29",
+    "replacementModelId": "gemini-3.7-flash",
+    "notes": "Model was shut down on September 29, 2025. Preserved for historical comparison only.",
+    "capabilities": {
+      "vision": true,
+      "audio": true,
+      "reasoning": false
+    }
+  },
+  {
+    "id": "gemini-1-5-flash",
+    "provider": "Google",
+    "modelName": "Gemini 1.5 Flash (Shutdown)",
+    "currency": "USD",
+    "inputPricePerMillion": 0.075,
+    "outputPricePerMillion": 0.30,
+    "effectiveDate": "2024-05-14",
+    "sourceUrl": "https://ai.google.dev/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "status": "stale",
+    "lifecycle": "shutdown",
+    "availability": "shutdown",
+    "recommendation": "none",
+    "shutdownDate": "2025-09-29",
+    "replacementModelId": "gemini-3.7-flash",
+    "notes": "Model was shut down on September 29, 2025. Preserved for historical comparison only.",
+    "capabilities": {
+      "vision": true,
+      "audio": true,
+      "reasoning": false
+    }
+  },
+  {
+    "id": "gemini-2-0-flash",
+    "provider": "Google",
+    "modelName": "Gemini 2.0 Flash (Shutdown)",
+    "currency": "USD",
+    "inputPricePerMillion": 0.10,
+    "outputPricePerMillion": 0.40,
+    "effectiveDate": "2024-12-15",
+    "sourceUrl": "https://ai.google.dev/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "status": "stale",
+    "lifecycle": "shutdown",
+    "availability": "shutdown",
+    "recommendation": "none",
+    "shutdownDate": "2026-06-01",
+    "replacementModelId": "gemini-3.7-flash",
+    "notes": "Model was shut down on June 1, 2026. Preserved for historical comparison only.",
+    "capabilities": {
+      "vision": true,
+      "audio": true,
+      "reasoning": false
+    }
+  },
+  {
+    "id": "deepseek-v4-flash",
+    "provider": "DeepSeek",
+    "modelName": "DeepSeek-V4-Flash",
+    "currency": "USD",
+    "inputPricePerMillion": 0.14,
+    "outputPricePerMillion": 0.28,
+    "effectiveDate": "2026-05-15",
+    "sourceUrl": "https://www.deepseek.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://www.deepseek.com/pricing",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "pricingTiers": {
+      "cachedInput": 0.0028
+    },
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": false
+    }
+  },
+  {
+    "id": "deepseek-v4-pro",
+    "provider": "DeepSeek",
+    "modelName": "DeepSeek-V4-Pro",
+    "currency": "USD",
+    "inputPricePerMillion": 0.435,
+    "outputPricePerMillion": 0.87,
+    "effectiveDate": "2026-05-15",
+    "sourceUrl": "https://www.deepseek.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://www.deepseek.com/pricing",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "supported",
+    "pricingTiers": {
+      "cachedInput": 0.003625
+    },
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": true
+    }
+  },
+  {
+    "id": "deepseek-v3",
+    "provider": "DeepSeek",
+    "modelName": "DeepSeek-V3",
+    "currency": "USD",
+    "inputPricePerMillion": 0.14,
+    "outputPricePerMillion": 0.28,
+    "effectiveDate": "2024-12-26",
+    "sourceUrl": "https://www.deepseek.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://www.deepseek.com/pricing",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "legacy",
+    "availability": "available",
+    "recommendation": "legacy",
+    "replacementModelId": "deepseek-v4-flash",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": false
+    },
+    "pricingTiers": {
+      "cachedInput": 0.014
+    }
+  },
+  {
+    "id": "deepseek-r1",
+    "provider": "DeepSeek",
+    "modelName": "DeepSeek-R1",
+    "currency": "USD",
+    "inputPricePerMillion": 0.55,
+    "outputPricePerMillion": 2.19,
+    "effectiveDate": "2025-01-20",
+    "sourceUrl": "https://www.deepseek.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://www.deepseek.com/pricing",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "supported",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": true
+    },
+    "pricingTiers": {
+      "cachedInput": 0.14
+    }
+  },
+  {
+    "id": "llama-3-3-70b",
+    "provider": "Meta",
+    "modelName": "Llama 3.3 70B",
+    "currency": "USD",
+    "inputPricePerMillion": 0.13,
+    "outputPricePerMillion": 0.40,
+    "effectiveDate": "2024-12-06",
+    "sourceUrl": "https://together.ai/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://www.llama.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": false
+    }
+  },
+  {
+    "id": "mistral-large-2",
+    "provider": "Mistral",
+    "modelName": "Mistral Large 2",
+    "currency": "USD",
+    "inputPricePerMillion": 2.00,
+    "outputPricePerMillion": 6.00,
+    "effectiveDate": "2024-07-24",
+    "sourceUrl": "https://mistral.ai/technology/#pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.mistral.ai/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": false
+    }
+  },
+  {
+    "id": "command-a-plus-05-2026",
+    "provider": "Cohere",
+    "modelName": "Command A+",
+    "currency": "USD",
+    "inputPricePerMillion": 2.50,
+    "outputPricePerMillion": 10.00,
+    "effectiveDate": "2026-05-01",
+    "sourceUrl": "https://cohere.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.cohere.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "current",
+    "availability": "available",
+    "recommendation": "recommended",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": true
+    }
+  },
+  {
+    "id": "command-r-plus",
+    "provider": "Cohere",
+    "modelName": "Command R+",
+    "currency": "USD",
+    "inputPricePerMillion": 2.50,
+    "outputPricePerMillion": 10.00,
+    "effectiveDate": "2024-04-04",
+    "sourceUrl": "https://cohere.com/pricing",
+    "lastVerifiedDate": "2026-08-24",
+    "recommendationSourceUrl": "https://docs.cohere.com/docs/models",
+    "recommendationVerifiedDate": "2026-08-24",
+    "status": "verified",
+    "lifecycle": "legacy",
+    "availability": "available",
+    "recommendation": "legacy",
+    "replacementModelId": "command-a-plus-05-2026",
+    "capabilities": {
+      "vision": false,
+      "audio": false,
+      "reasoning": false
+    }
+  }
+]
