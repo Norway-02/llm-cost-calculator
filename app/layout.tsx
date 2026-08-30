@@ -7,11 +7,12 @@ export const metadata: Metadata = {
   title: 'AI LLM Token & Cost Calculator | Compare OpenAI, Anthropic, Gemini Prices',
   description:
     'Free, fast, trustworthy developer utility to calculate and compare LLM API billing costs. Compare OpenAI GPT-4o, Claude 3.7, Gemini 2.0, DeepSeek R1, and Llama 3.3.',
-  metadataBase: new URL('https://llmcalc.com'),
+  metadataBase: new URL('https://llmspends.dpdns.org'),
   openGraph: {
     title: 'AI LLM Token & Cost Calculator',
     description: 'Calculate and compare LLM API pricing across OpenAI, Anthropic, Google Gemini, and DeepSeek.',
     type: 'website',
+    url: 'https://llmspends.dpdns.org',
   },
   twitter: {
     card: 'summary_large_image',

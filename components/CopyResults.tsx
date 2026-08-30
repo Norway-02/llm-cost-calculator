@@ -34,7 +34,7 @@ Monthly Spend: ${formatCurrency(result.monthlyCost)} USD
 Cost / Request: ${formatCurrency(result.costPerRequest)} USD
 Annual Spend: ${formatCurrency(result.annualCost)} USD
 
-Calculated via LLMCalc.com`;
+Calculated via llmspends.dpdns.org`;
 
     try {
       await navigator.clipboard.writeText(summaryText);

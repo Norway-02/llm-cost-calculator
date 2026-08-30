@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     'Convert prompt and completion token counts into exact dollar costs per request, per thousand (1K), and per million (1M) tokens.',
   alternates: {
-    canonical: 'https://llmcalc.com/token-calculator',
+    canonical: 'https://llmspends.dpdns.org/token-calculator',
   },
 };
 

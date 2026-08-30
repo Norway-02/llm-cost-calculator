@@ -4,5 +4,11 @@
   "compatibility_date": "2026-08-31",
   "assets": {
     "directory": "./out"
-  }
+  },
+  "routes": [
+    {
+      "pattern": "llmspends.dpdns.org",
+      "custom_domain": true
+    }
+  ]
 }

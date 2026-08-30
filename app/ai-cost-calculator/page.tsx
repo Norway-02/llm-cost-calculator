@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     'Calculate monthly and annual AI API costs across OpenAI, Anthropic, Google, and open-source hosted models.',
   alternates: {
-    canonical: 'https://llmcalc.com/ai-cost-calculator',
+    canonical: 'https://llmspends.dpdns.org/ai-cost-calculator',
   },
 };
 

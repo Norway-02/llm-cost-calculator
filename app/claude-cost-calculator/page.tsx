@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Calculate Anthropic Claude API billing for Claude Sonnet 5 ($2/1M input, $10/1M output intro rate), Claude 3.5 Haiku, and Opus models.',
   alternates: {
-    canonical: 'https://llmcalc.com/claude-cost-calculator',
+    canonical: 'https://llmspends.dpdns.org/claude-cost-calculator',
   },
 };
 

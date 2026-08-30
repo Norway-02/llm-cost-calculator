@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Free developer utility to calculate, compare, and forecast LLM API billing costs for OpenAI, Anthropic Claude, Google Gemini, DeepSeek, and Meta Llama.',
   alternates: {
-    canonical: 'https://llmcalc.com/',
+    canonical: 'https://llmspends.dpdns.org/',
   },
 };
 

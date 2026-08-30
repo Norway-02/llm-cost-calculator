@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     'Paste prompt text to estimate token count, word count, and character length instantly in your browser.',
   alternates: {
-    canonical: 'https://llmcalc.com/token-counter',
+    canonical: 'https://llmspends.dpdns.org/token-counter',
   },
 };
 

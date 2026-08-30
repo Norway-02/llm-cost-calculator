@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Calculate Google AI Studio / Vertex AI Gemini API costs for Gemini 3.7 Flash ($0.75/1M input, $3.75/1M output). Real-time token and budget estimator.',
   alternates: {
-    canonical: 'https://llmcalc.com/gemini-cost-calculator',
+    canonical: 'https://llmspends.dpdns.org/gemini-cost-calculator',
   },
 };
 

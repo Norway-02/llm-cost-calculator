@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     'Forecast engineering AI budgets, team API usage limits, and annual infrastructure spending across multiple LLM providers.',
   alternates: {
-    canonical: 'https://llmcalc.com/ai-budget-calculator',
+    canonical: 'https://llmspends.dpdns.org/ai-budget-calculator',
   },
 };
 

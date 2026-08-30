@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Compare LLM API rates side-by-side. See verified cost differences between GPT-4o, Claude Sonnet 5, Gemini 3.7 Flash, DeepSeek-V4-Flash, and Llama 3.3.',
   alternates: {
-    canonical: 'https://llmcalc.com/llm-price-comparison',
+    canonical: 'https://llmspends.dpdns.org/llm-price-comparison',
   },
 };
 

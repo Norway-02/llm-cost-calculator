@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   description:
     'Calculate OpenAI API costs for GPT-4o, GPT-4o mini, o1, and o3-mini. Includes prompt caching and batch discount rates.',
   alternates: {
-    canonical: 'https://llmcalc.com/openai-cost-calculator',
+    canonical: 'https://llmspends.dpdns.org/openai-cost-calculator',
   },
 };
 

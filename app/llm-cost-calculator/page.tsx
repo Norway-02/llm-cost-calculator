@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description:
     'Calculate LLM API pricing for commercial and open-weights models. Real-time cost breakdown for daily, monthly, and yearly usage.',
   alternates: {
-    canonical: 'https://llmcalc.com/llm-cost-calculator',
+    canonical: 'https://llmspends.dpdns.org/llm-cost-calculator',
   },
 };
 
