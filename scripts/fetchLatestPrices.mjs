@@ -7,64 +7,78 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const modelsPath = path.resolve(__dirname, '../data/models.json');
-const modelsData = JSON.parse(fs.readFileSync(modelsPath, 'utf8'));
+const tmpModelsPath = path.resolve(__dirname, '../data/models.tmp.json');
 
+const IS_DRY_RUN = process.argv.includes('--dry-run');
 const TODAY = new Date().toISOString().split('T')[0];
 
-console.log(`🌐 Starting Automated Daily Pricing Synchronization (${TODAY})...`);
+console.log(`🌐 Automated Daily Pricing Synchronization Started (${TODAY})...`);
+if (IS_DRY_RUN) {
+  console.log('🔍 DRY-RUN MODE ACTIVE: No file system changes will be persisted.');
+}
 
+// 1. Fail-Closed Remote Fetch
 async function fetchLiveInternetPricing() {
   try {
     const res = await fetch('https://openrouter.ai/api/v1/models');
     if (!res.ok) {
-      console.warn(`⚠️ Internet API responded with status ${res.status}. Retaining local dataset.`);
-      return [];
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
     }
     const json = await res.json();
-    return json.data || [];
+    if (!json || !Array.isArray(json.data)) {
+      throw new Error('Malformed API payload: missing data array');
+    }
+    if (json.data.length < 50) {
+      throw new Error(`Incomplete catalog retrieved (${json.data.length} models < 50 minimum threshold)`);
+    }
+    return json.data;
   } catch (err) {
-    console.warn('⚠️ Network fetch error:', err.message);
-    return [];
+    console.error(`❌ FAIL-CLOSED: External provider pricing fetch failed: ${err.message}`);
+    process.exit(1);
   }
 }
 
-function parseProvider(rawName, id) {
-  const nameLower = (rawName || '').toLowerCase();
-  const idLower = (id || '').toLowerCase();
-
-  if (nameLower.includes('openai') || idLower.includes('openai') || idLower.includes('gpt-')) return 'OpenAI';
-  if (nameLower.includes('anthropic') || idLower.includes('claude')) return 'Anthropic';
-  if (nameLower.includes('google') || idLower.includes('gemini')) return 'Google';
-  if (nameLower.includes('deepseek')) return 'DeepSeek';
-  if (nameLower.includes('meta') || idLower.includes('llama')) return 'Meta';
-  if (nameLower.includes('mistral')) return 'Mistral';
-  if (nameLower.includes('cohere') || idLower.includes('command')) return 'Cohere';
-  if (nameLower.includes('qwen') || idLower.includes('qwen')) return 'Qwen';
-  if (nameLower.includes('perplexity') || idLower.includes('sonar')) return 'Perplexity';
-  return 'Other';
-}
-
 function normalizePricePerMillion(rawTokenPrice) {
+  if (rawTokenPrice === null || rawTokenPrice === undefined) return 0;
   const price = Number(rawTokenPrice);
-  if (isNaN(price) || price < 0) return 0;
+  if (isNaN(price) || !isFinite(price) || price < 0) return 0;
   // Convert per-token price to per 1,000,000 tokens price
   const perMillion = Math.round(price * 1_000_000 * 10000) / 10000;
   return Math.max(0, perMillion);
 }
 
+function isPriceAnomaly(oldPrice, newPrice) {
+  if (oldPrice <= 0 || newPrice <= 0) {
+    // Zero price anomaly check for established paid models
+    if (oldPrice > 0 && newPrice === 0) return true;
+    return false;
+  }
+
+  const ratio = newPrice / oldPrice;
+  // Flag as anomaly if price jumps > 10x (1000%) or drops > 10x (< 10%)
+  if (ratio > 10 || ratio < 0.1) {
+    return true;
+  }
+
+  return false;
+}
+
 async function runAutoIngestion() {
+  const originalRaw = fs.readFileSync(modelsPath, 'utf8');
+  const modelsData = JSON.parse(originalRaw);
+
   const liveModels = await fetchLiveInternetPricing();
-  console.log(`Found ${liveModels.length} models across internet API catalogs.`);
+  console.log(`✓ Retried catalog: ${liveModels.length} models fetched from API provider sources.`);
 
   let updatedCount = 0;
-  let addedCount = 0;
+  let unchangedCount = 0;
+  let anomaliesCount = 0;
+  const changesReport = [];
 
-  const existingMap = new Map();
-  modelsData.forEach((m) => existingMap.set(m.id, m));
+  // Deep clone modelsData for safe atomic operations
+  const workingDataset = JSON.parse(JSON.stringify(modelsData));
 
-  // 1. Update existing models in our registry with verified current internet rates
-  for (const m of modelsData) {
-    // Look for matching live model by ID or slug
+  for (const m of workingDataset) {
     const matched = liveModels.find(
       (live) =>
         live.id === m.id ||
@@ -77,32 +91,84 @@ async function runAutoIngestion() {
       const liveInputPrice = normalizePricePerMillion(matched.pricing.prompt);
       const liveOutputPrice = normalizePricePerMillion(matched.pricing.completion);
 
+      const oldInput = m.inputPricePerMillion;
+      const oldOutput = m.outputPricePerMillion;
+
+      // Anomaly detection check before accepting new price
+      const inputAnomaly = isPriceAnomaly(oldInput, liveInputPrice);
+      const outputAnomaly = isPriceAnomaly(oldOutput, liveOutputPrice);
+
+      if (inputAnomaly || outputAnomaly) {
+        console.warn(`⚠️ [ANOMALY REJECTED] ${m.provider} ${m.modelName} (${m.id}): Proposed Input $${liveInputPrice} (was $${oldInput}), Output $${liveOutputPrice} (was $${oldOutput}). Retaining current rates.`);
+        anomaliesCount++;
+        unchangedCount++;
+        continue;
+      }
+
       if (liveInputPrice > 0 || liveOutputPrice > 0) {
-        if (m.inputPricePerMillion !== liveInputPrice || m.outputPricePerMillion !== liveOutputPrice) {
-          console.log(`🔄 Price update for ${m.id} (${m.provider}): Input $${m.inputPricePerMillion} -> $${liveInputPrice}, Output $${m.outputPricePerMillion} -> $${liveOutputPrice}`);
+        if (oldInput !== liveInputPrice || oldOutput !== liveOutputPrice) {
+          changesReport.push(`- ${m.provider} ${m.modelName} (${m.id}): Input $${oldInput} -> $${liveInputPrice}, Output $${oldOutput} -> $${liveOutputPrice}`);
           m.inputPricePerMillion = liveInputPrice;
           m.outputPricePerMillion = liveOutputPrice;
+          m.lastVerifiedDate = TODAY;
           updatedCount++;
+          continue;
         }
       }
     }
 
-    // Always bump lastVerifiedDate to ensure fresh verification metadata
-    m.lastVerifiedDate = TODAY;
+    unchangedCount++;
   }
 
-  console.log(`✅ Refreshed verified dates & updated ${updatedCount} existing model rates.`);
+  // Reporting Summary
+  console.log('\n====================================================');
+  console.log('Automated Daily Pricing Synchronization Summary');
+  console.log('====================================================');
+  console.log(`Date:                       ${TODAY}`);
+  console.log(`Providers/Models Processed: ${workingDataset.length}`);
+  console.log(`Models Changed:             ${updatedCount}`);
+  console.log(`Models Unchanged:           ${unchangedCount}`);
+  console.log(`Anomalies Filtered:         ${anomaliesCount}`);
+  console.log('----------------------------------------------------');
 
-  // Save updated models back to file
-  fs.writeFileSync(modelsPath, JSON.stringify(modelsData, null, 2) + '\n', 'utf8');
+  if (changesReport.length > 0) {
+    console.log('Detected Price Changes:');
+    changesReport.forEach((msg) => console.log(msg));
+  }
 
-  // Verify dataset invariants via validation script
+  // 4. Atomic Replace or No-Op Handling
+  if (updatedCount === 0) {
+    console.log('\n[NO-OP] No meaningful pricing changes detected across provider catalogs.');
+    console.log('Existing verified dataset remains unchanged.');
+    console.log('====================================================\n');
+    process.exit(0);
+  }
+
+  // Write to temporary file first
+  fs.writeFileSync(tmpModelsPath, JSON.stringify(workingDataset, null, 2) + '\n', 'utf8');
+
+  // Validate temporary file
   try {
-    console.log('Running pricing invariants validator after ingestion...');
-    execSync('node scripts/validatePricing.mjs', { stdio: 'inherit' });
-    console.log('🎉 Automated Internet Pricing Update Complete Successfully!');
-  } catch (err) {
-    console.error('❌ Invariants validation failed after ingestion:', err.message);
+    console.log('Running pricing invariants validator on temporary dataset...');
+    execSync(`node scripts/validatePricing.mjs "${tmpModelsPath}"`, { stdio: 'inherit' });
+    console.log('✓ Validation Result: PASS');
+
+    if (IS_DRY_RUN) {
+      console.log('\n[DRY-RUN COMPLETE] Validation passed. Temporary dataset unlinked without replacing data/models.json.');
+      fs.unlinkSync(tmpModelsPath);
+      process.exit(0);
+    }
+
+    // Atomic replace
+    fs.renameSync(tmpModelsPath, modelsPath);
+    console.log('✓ Atomic Replacement: data/models.json successfully updated.');
+    console.log('\nDisclaimer: The model dataset reflects pricing rates retrieved from configured API provider catalogs and official pricing documentation at the time of the latest successful automated daily sync and validation check.');
+    console.log('====================================================\n');
+  } catch {
+    console.error('\n❌ FAIL-CLOSED: Temporary dataset validation failed. Unlinking tmp file and failing workflow.');
+    if (fs.existsSync(tmpModelsPath)) {
+      fs.unlinkSync(tmpModelsPath);
+    }
     process.exit(1);
   }
 }

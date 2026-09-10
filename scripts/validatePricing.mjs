@@ -5,7 +5,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const modelsPath = path.resolve(__dirname, '../data/models.json');
+const targetArg = process.argv.find((arg) => !arg.startsWith('--') && arg.endsWith('.json'));
+const modelsPath = targetArg ? path.resolve(process.cwd(), targetArg) : path.resolve(__dirname, '../data/models.json');
 const modelsData = JSON.parse(fs.readFileSync(modelsPath, 'utf8'));
 
 const providerDefaultConfigs = [
