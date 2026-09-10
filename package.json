@@ -7,10 +7,11 @@
     "build": "next build",
     "deploy": "next build && npx wrangler deploy",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "NODE_OPTIONS='--max-old-space-size=2048' eslint . --cache",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "validate:pricing": "node scripts/validatePricing.mjs"
+    "validate:pricing": "node scripts/validatePricing.mjs",
+    "update:pricing": "node scripts/fetchLatestPrices.mjs"
   },
   "dependencies": {
     "next": "16.3.2",

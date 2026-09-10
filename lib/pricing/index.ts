@@ -1,5 +1,5 @@
 import modelsData from '@/data/models.json';
-import { ModelPricing, ModelsDatasetSchema } from './schema';
+import { ModelPricing, ModelsDatasetSchema, getActivePricesForDate } from './schema';
 
 let cachedModels: ModelPricing[] | null = null;
 
@@ -177,3 +177,53 @@ export function getLifecycleCounts() {
 
   return counts;
 }
+
+export interface PricingHistoryEntry {
+  effectiveFrom: string;
+  inputPricePerMillion: number;
+  outputPricePerMillion: number;
+  sourceUrl: string;
+  notes?: string;
+}
+
+export function getCurrentPricing(modelId: string): { inputPrice: number; outputPrice: number } | null {
+  const model = getModelById(modelId);
+  if (!model) return null;
+  return getActivePricesForDate(model, new Date());
+}
+
+export function getPricingAtDate(modelId: string, date: Date): { inputPrice: number; outputPrice: number } | null {
+  const model = getModelById(modelId);
+  if (!model) return null;
+  return getActivePricesForDate(model, date);
+}
+
+export function getPricingHistory(modelId: string): PricingHistoryEntry[] {
+  const model = getModelById(modelId);
+  if (!model) return [];
+
+  const history: PricingHistoryEntry[] = [
+    {
+      effectiveFrom: model.effectiveDate,
+      inputPricePerMillion: model.inputPricePerMillion,
+      outputPricePerMillion: model.outputPricePerMillion,
+      sourceUrl: model.sourceUrl,
+      notes: model.notes,
+    },
+  ];
+
+  if (model.pricingSchedule && model.pricingSchedule.length > 0) {
+    model.pricingSchedule.forEach((sched) => {
+      history.push({
+        effectiveFrom: sched.effectiveFrom,
+        inputPricePerMillion: sched.inputPricePerMillion,
+        outputPricePerMillion: sched.outputPricePerMillion,
+        sourceUrl: model.sourceUrl,
+        notes: sched.notes,
+      });
+    });
+  }
+
+  return history.sort((a, b) => new Date(a.effectiveFrom).getTime() - new Date(b.effectiveFrom).getTime());
+}
+

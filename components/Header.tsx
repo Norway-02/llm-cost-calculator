@@ -21,8 +21,10 @@ export const Header: React.FC = () => {
   const navLinks = [
     { href: '/', label: 'Calculator' },
     { href: '/llm-price-comparison', label: 'Compare' },
-    { href: '/token-counter', label: 'Token Counter' },
-    { href: '/ai-cost-calculator', label: 'All Tools' },
+    { href: '/ai-workload-calculator', label: 'Workload' },
+    { href: '/ai-cost-optimizer', label: 'Optimizer' },
+    { href: '/providers', label: 'Providers' },
+    { href: '/models', label: 'Models' },
   ];
 
   return (

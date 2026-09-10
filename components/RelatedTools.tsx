@@ -25,6 +25,48 @@ const ALL_TOOLS: ToolLink[] = [
     badge: 'Popular',
   },
   {
+    title: 'AI Workload Calculator',
+    description: 'Simulate production request volumes, caching hit rates, and monthly growth.',
+    href: '/ai-workload-calculator',
+    badge: 'New',
+  },
+  {
+    title: 'AI Cost Per User',
+    description: 'Calculate average monthly LLM API costs as active user count scales.',
+    href: '/ai-cost-per-user',
+  },
+  {
+    title: 'AI SaaS Cost Calculator',
+    description: 'Model gross margins, break-even subscribers, and merchant fees for AI apps.',
+    href: '/ai-saas-cost-calculator',
+  },
+  {
+    title: 'Cheapest LLM Finder',
+    description: 'Rank verified AI models by price for your custom token workload.',
+    href: '/cheapest-llm',
+  },
+  {
+    title: 'Model Replacement Finder',
+    description: 'Find lower cost alternative models to replace expensive LLM deployments.',
+    href: '/model-replacement-finder',
+  },
+  {
+    title: 'AI Cost Optimizer',
+    description: 'Calculate rule-based savings from prompt caching, batching, and routing.',
+    href: '/ai-cost-optimizer',
+    badge: 'Flagship',
+  },
+  {
+    title: 'Prompt Cost Estimator',
+    description: 'Paste text or prompts to estimate token counts and calculate execution costs.',
+    href: '/prompt-cost-analyzer',
+  },
+  {
+    title: 'CSV Log Usage Analyzer',
+    description: 'Parse API usage logs in CSV format to calculate token volume and spend.',
+    href: '/usage-analyzer',
+  },
+  {
     title: 'OpenAI Cost Calculator',
     description: 'Calculate current verified OpenAI GPT-4o, o1, and o3-mini API usage expenses.',
     href: '/openai-cost-calculator',
@@ -40,19 +82,9 @@ const ALL_TOOLS: ToolLink[] = [
     href: '/gemini-cost-calculator',
   },
   {
-    title: 'AI Budget Calculator',
-    description: 'Plan quarterly and annual AI engineering API budgets.',
-    href: '/ai-budget-calculator',
-  },
-  {
-    title: 'Token Counter Estimator',
-    description: 'Client-side prompt character, word, and token count estimator.',
-    href: '/token-counter',
-  },
-  {
-    title: 'Token Calculator',
-    description: 'Convert token usage into exact USD cost per request or batch.',
-    href: '/token-calculator',
+    title: 'DeepSeek Cost Calculator',
+    description: 'Calculate verified DeepSeek V4 Flash, V3, and R1 API rates.',
+    href: '/deepseek-cost-calculator',
   },
 ];
 

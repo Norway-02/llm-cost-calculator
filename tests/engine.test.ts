@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateCosts } from '@/lib/engine/calculator';
+import { calculateCosts, calculateWorkloadCosts, calculateSaasEconomics } from '@/lib/engine/calculator';
 import { formatCurrency, formatNumber } from '@/lib/engine/format';
 
 describe('Calculation Engine', () => {
@@ -95,3 +95,67 @@ describe('Formatting Utilities', () => {
     expect(formatNumber(0)).toBe('0');
   });
 });
+
+describe('Workload Calculation Engine', () => {
+  it('calculates workload costs with caching and batching options accurately', () => {
+    const res = calculateWorkloadCosts({
+      inputTokensPerRequest: 2000,
+      outputTokensPerRequest: 500,
+      requestsPerUserPerDay: 10,
+      monthlyActiveUsers: 100,
+      inputPricePerMillion: 2.50,
+      outputPricePerMillion: 10.00,
+      cacheHitRate: 0.5,
+      cachedInputPricePerMillion: 1.25,
+      growthRateMonthly: 0.10,
+    });
+
+    expect(res.costPerRequest).toBeGreaterThan(0);
+    expect(res.costPerUserMonthly).toBeGreaterThan(0);
+    expect(res.monthlyCost).toBeGreaterThan(0);
+    expect(res.costForUsers[100]).toBeCloseTo(res.monthlyCost);
+    expect(res.projections.month2).toBeGreaterThan(res.projections.month1);
+    expect(res.projections.month12).toBeGreaterThan(res.projections.month6);
+  });
+
+  it('safely handles zero and invalid values in workload calculations', () => {
+    const res = calculateWorkloadCosts({
+      inputTokensPerRequest: 0,
+      outputTokensPerRequest: 0,
+      requestsPerUserPerDay: 0,
+      monthlyActiveUsers: 0,
+      inputPricePerMillion: 2.50,
+      outputPricePerMillion: 10.00,
+    });
+
+    expect(res.costPerRequest).toBe(0);
+    expect(res.monthlyCost).toBe(0);
+    expect(res.costForUsers[1000]).toBe(0);
+    expect(res.projections.month12).toBe(0);
+  });
+});
+
+describe('SaaS Economics Engine', () => {
+  it('calculates paid users, revenue, gross margin and break-even points', () => {
+    const res = calculateSaasEconomics({
+      monthlyActiveUsers: 1000,
+      paidConversionRatePercent: 5, // 50 paid users
+      subscriptionPriceMonthly: 20, // $1,000 monthly revenue
+      requestsPerUserPerDay: 5,
+      inputTokensPerRequest: 1000,
+      outputTokensPerRequest: 200,
+      inputPricePerMillion: 2.50,
+      outputPricePerMillion: 10.00,
+      infrastructureCostMonthly: 100,
+      paymentFeePercent: 2.9,
+    });
+
+    expect(res.paidUsers).toBe(50);
+    expect(res.monthlyRevenue).toBe(1000);
+    expect(res.aiCostMonthly).toBeGreaterThan(0);
+    expect(res.paymentFeesMonthly).toBeCloseTo(29);
+    expect(res.grossProfitMonthly).toBeDefined();
+    expect(res.grossMarginPercent).toBeLessThanOrEqual(100);
+  });
+});
+

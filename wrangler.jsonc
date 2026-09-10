@@ -3,13 +3,10 @@
   "name": "llmspend",
   "account_id": "41a8058780a273291594a5dc50a031ba",
   "compatibility_date": "2026-08-31",
+  "workers_dev": true,
   "assets": {
-    "directory": "./out"
-  },
-  "routes": [
-    {
-      "pattern": "llmspends.dpdns.org",
-      "custom_domain": true
-    }
-  ]
+    "directory": "./out",
+    "html_handling": "drop-trailing-slash",
+    "not_found_handling": "404-page"
+  }
 }
