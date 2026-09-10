@@ -11,7 +11,7 @@ const modelsData = JSON.parse(fs.readFileSync(modelsPath, 'utf8'));
 
 const TODAY = new Date().toISOString().split('T')[0];
 
-console.log(`🌐 Starting Automated LLM Pricing & Internet Model Ingestion (${TODAY})...`);
+console.log(`🌐 Starting Automated Daily Pricing Synchronization (${TODAY})...`);
 
 async function fetchLiveInternetPricing() {
   try {
