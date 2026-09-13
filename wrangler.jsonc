@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "llmspend",
-  "account_id": "41a8058780a273291594a5dc50a031ba",
+  "account_id": "7f5b800ae0a647e27fd4e81897b468bf",
   "compatibility_date": "2026-08-31",
   "workers_dev": true,
   "assets": {
