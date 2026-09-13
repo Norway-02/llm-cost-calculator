@@ -1,7 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
+import { getSyncFreshnessInfo } from '@/lib/pricing';
 
 export const Footer: React.FC = () => {
+  const syncInfo = getSyncFreshnessInfo();
+
   return (
     <footer className="mt-20 border-t border-white/10 bg-[#060914] py-12 text-xs text-slate-400">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
@@ -68,6 +71,12 @@ export const Footer: React.FC = () => {
               <li><Link href="/guides/llm-cost-comparison-guide" className="hover:text-blue-400 transition-colors">Cost Benchmark Guide</Link></li>
               <li><Link href="/guides/api-pricing-explained" className="hover:text-blue-400 transition-colors">Caching & Batch Guide</Link></li>
             </ul>
+            <p className="text-slate-400 leading-relaxed mb-2 text-[11px]">
+              Pricing dataset — Last successfully synced <strong className="text-slate-200">{syncInfo.formattedLastSuccessDate}</strong>.
+              {syncInfo.status === 'failed' && (
+                <span className="text-amber-400 font-semibold block mt-1">⚠️ Latest daily sync attempt failed</span>
+              )}
+            </p>
             <p className="text-slate-400 leading-relaxed mb-2 text-[11px]">
               Zero backend tracking of prompt text. All calculations occur client-side in pure JS.
             </p>

@@ -1,7 +1,5 @@
-'use client';
-
 import React from 'react';
-import { ModelPricing, getEffectiveFreshnessStatus } from '@/lib/pricing/schema';
+import { ModelPricing, getEffectiveFreshnessStatus, formatDateUTC } from '@/lib/pricing/schema';
 import { getModelById } from '@/lib/pricing';
 import { PricingFreshnessBadge } from './PricingFreshnessBadge';
 import { Badge } from './ui/Badge';
@@ -13,6 +11,8 @@ export interface PricingSourceProps {
 export const PricingSource: React.FC<PricingSourceProps> = ({ model }) => {
   const status = getEffectiveFreshnessStatus(model);
   const replacementModel = model.replacementModelId ? getModelById(model.replacementModelId) : undefined;
+  const formattedVerifiedDate = formatDateUTC(model.lastVerifiedDate);
+  const formattedEffectiveDate = formatDateUTC(model.effectiveDate);
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0B1020]/80 p-4 text-xs text-slate-400 backdrop-blur-xl">
@@ -48,7 +48,7 @@ export const PricingSource: React.FC<PricingSourceProps> = ({ model }) => {
       {model.lifecycle === 'shutdown' && (
         <div className="mt-3 rounded-xl bg-rose-950/60 p-3 text-rose-200 border border-rose-500/30">
           🛑 <strong>Model Unavailable:</strong> This model was shut down by {model.provider}
-          {model.shutdownDate ? ` on ${model.shutdownDate}` : ''}. It is unavailable for active API deployments. Consider switching to{' '}
+          {model.shutdownDate ? ` on ${formatDateUTC(model.shutdownDate)}` : ''}. It is unavailable for active API deployments. Consider switching to{' '}
           {replacementModel ? (
             <strong className="underline text-white">{replacementModel.modelName}</strong>
           ) : (
@@ -67,12 +67,13 @@ export const PricingSource: React.FC<PricingSourceProps> = ({ model }) => {
 
       {status === 'stale' && model.lifecycle !== 'shutdown' && (
         <div className="mt-3 rounded-xl bg-amber-950/40 p-2.5 text-amber-300 border border-amber-500/20">
-          ⚠️ <strong>Pricing Notice:</strong> Rates were last verified on {model.lastVerifiedDate}. Verify directly with {model.provider} before purchasing enterprise credits.
+          ⚠️ <strong>Pricing Notice:</strong> Rates were verified on {formattedVerifiedDate}. Verify directly with {model.provider} before purchasing enterprise credits.
         </div>
       )}
 
       <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] text-slate-400 border-t border-white/5 pt-2">
-        <span>Effective: <strong className="text-slate-200">{model.effectiveDate}</strong></span>
+        <span>Effective: <strong className="text-slate-200">{formattedEffectiveDate}</strong></span>
+        <span>Verified: <strong className="text-slate-200">{formattedVerifiedDate}</strong></span>
         <span>Input: <strong className="text-slate-200">${model.inputPricePerMillion} / 1M</strong></span>
         <span>Output: <strong className="text-slate-200">${model.outputPricePerMillion} / 1M</strong></span>
         {model.pricingTiers?.cachedInput !== undefined && (

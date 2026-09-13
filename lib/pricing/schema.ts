@@ -79,6 +79,35 @@ export type ScheduledPricing = z.infer<typeof ScheduledPricingSchema>;
 
 export const ModelsDatasetSchema = z.array(ModelPricingSchema);
 
+export const SyncMetadataSchema = z.object({
+  lastAttemptAt: z.string().min(1),
+  lastSuccessfulSyncAt: z.string().min(1),
+  status: z.enum(['success', 'failed']),
+  modelsChecked: z.number().min(0),
+  modelsUpdated: z.number().min(0),
+  lastError: z.string().nullable().optional(),
+});
+
+export type SyncMetadata = z.infer<typeof SyncMetadataSchema>;
+
+/**
+ * Formats a date string or Date object into a clean, deterministic UTC date representation (e.g. "Sep 13, 2026").
+ */
+export function formatDateUTC(dateInput: string | Date): string {
+  try {
+    const d = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
+    if (isNaN(d.getTime())) return String(dateInput);
+    return d.toLocaleDateString('en-US', {
+      timeZone: 'UTC',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  } catch {
+    return String(dateInput);
+  }
+}
+
 export function isPricingStale(lastVerifiedDate: string, maxDays = 90): boolean {
   try {
     const verified = new Date(lastVerifiedDate).getTime();

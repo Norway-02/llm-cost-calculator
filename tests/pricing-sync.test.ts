@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { ModelPricingSchema } from '@/lib/pricing/schema';
+import { ModelPricingSchema, SyncMetadataSchema, formatDateUTC } from '@/lib/pricing/schema';
+import { getSyncFreshnessInfo, SyncMetadata } from '@/lib/pricing';
 
 function isPriceAnomaly(oldPrice: number, newPrice: number): boolean {
   if (oldPrice <= 0 || newPrice <= 0) {
@@ -54,5 +55,56 @@ describe('Automated Daily Pricing Synchronization Safeguards', () => {
 
     const result = ModelPricingSchema.safeParse(malformedModel);
     expect(result.success).toBe(false);
+  });
+
+  it('validates SyncMetadataSchema correctly', () => {
+    const validMetadata: SyncMetadata = {
+      lastAttemptAt: '2026-09-13T11:40:00.000Z',
+      lastSuccessfulSyncAt: '2026-09-13T11:40:00.000Z',
+      status: 'success',
+      modelsChecked: 436,
+      modelsUpdated: 0,
+      lastError: null,
+    };
+
+    expect(SyncMetadataSchema.safeParse(validMetadata).success).toBe(true);
+  });
+
+  it('calculates dynamic freshness badge labels correctly for recent sync', () => {
+    const now = new Date('2026-09-13T12:00:00Z');
+    const mockMetadata: SyncMetadata = {
+      lastAttemptAt: '2026-09-13T06:00:00Z',
+      lastSuccessfulSyncAt: '2026-09-13T06:00:00Z',
+      status: 'success',
+      modelsChecked: 436,
+      modelsUpdated: 0,
+    };
+
+    const freshness = getSyncFreshnessInfo(mockMetadata, now);
+    expect(freshness.badgeLabel).toBe('● Synced today');
+    expect(freshness.formattedLastSuccessDate).toBe('Sep 13, 2026');
+  });
+
+  it('reports warning badge when sync attempt fails', () => {
+    const now = new Date('2026-09-13T12:00:00Z');
+    const mockFailedMetadata: SyncMetadata = {
+      lastAttemptAt: '2026-09-13T12:00:00Z',
+      lastSuccessfulSyncAt: '2026-09-12T06:00:00Z', // Previous successful run
+      status: 'failed',
+      modelsChecked: 0,
+      modelsUpdated: 0,
+      lastError: 'HTTP 500 Provider Outage',
+    };
+
+    const freshness = getSyncFreshnessInfo(mockFailedMetadata, now);
+    expect(freshness.status).toBe('failed');
+    expect(freshness.badgeLabel).toBe('⚠️ Sync attempt failed');
+    // Successful date remains previous day
+    expect(freshness.formattedLastSuccessDate).toBe('Sep 12, 2026');
+  });
+
+  it('formats dates deterministically with UTC handling', () => {
+    const formatted = formatDateUTC('2026-08-01');
+    expect(formatted).toBe('Aug 1, 2026');
   });
 });

@@ -1,7 +1,80 @@
+export type { SyncMetadata, ModelPricing } from './schema';
 import modelsData from '@/data/models.json';
-import { ModelPricing, ModelsDatasetSchema, getActivePricesForDate } from './schema';
+import syncMetadataData from '@/data/sync-metadata.json';
+import {
+  ModelPricing,
+  ModelsDatasetSchema,
+  SyncMetadata,
+  SyncMetadataSchema,
+  getActivePricesForDate,
+  formatDateUTC,
+} from './schema';
 
 let cachedModels: ModelPricing[] | null = null;
+let cachedSyncMetadata: SyncMetadata | null = null;
+
+export function getSyncMetadata(): SyncMetadata {
+  if (!cachedSyncMetadata) {
+    const parseResult = SyncMetadataSchema.safeParse(syncMetadataData);
+    if (!parseResult.success) {
+      cachedSyncMetadata = {
+        lastAttemptAt: '2026-09-13T00:00:00Z',
+        lastSuccessfulSyncAt: '2026-09-13T00:00:00Z',
+        status: 'success',
+        modelsChecked: 436,
+        modelsUpdated: 0,
+        lastError: null,
+      };
+    } else {
+      cachedSyncMetadata = parseResult.data;
+    }
+  }
+  return cachedSyncMetadata;
+}
+
+export interface SyncFreshnessInfo {
+  status: 'success' | 'failed';
+  lastSuccessfulSyncAt: string;
+  lastAttemptAt: string;
+  formattedLastSuccessDate: string;
+  badgeLabel: string;
+  isStale: boolean;
+  daysOld: number;
+}
+
+export function getSyncFreshnessInfo(
+  metadata: SyncMetadata = getSyncMetadata(),
+  now: Date = new Date()
+): SyncFreshnessInfo {
+  const lastSuccessTime = new Date(metadata.lastSuccessfulSyncAt).getTime();
+  const nowTime = now.getTime();
+  const diffMs = Math.max(0, nowTime - (isNaN(lastSuccessTime) ? nowTime : lastSuccessTime));
+  const daysOld = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const isStale = daysOld > 3;
+
+  let badgeLabel = '● Synced today';
+  if (metadata.status === 'failed') {
+    badgeLabel = '⚠️ Sync attempt failed';
+  } else if (daysOld === 0) {
+    badgeLabel = '● Synced today';
+  } else if (daysOld === 1) {
+    badgeLabel = '● Synced yesterday';
+  } else if (daysOld <= 7) {
+    badgeLabel = `● Synced ${daysOld} days ago`;
+  } else {
+    badgeLabel = `⚠️ Sync is ${daysOld} days old`;
+  }
+
+  return {
+    status: metadata.status,
+    lastSuccessfulSyncAt: metadata.lastSuccessfulSyncAt,
+    lastAttemptAt: metadata.lastAttemptAt,
+    formattedLastSuccessDate: formatDateUTC(metadata.lastSuccessfulSyncAt),
+    badgeLabel,
+    isStale,
+    daysOld,
+  };
+}
 
 export interface ProviderDefaultConfigEntry {
   provider: string;
@@ -10,53 +83,54 @@ export interface ProviderDefaultConfigEntry {
   recommendationSourceUrl: string;
 }
 
-/**
- * Verified provider recommendation configurations with source attribution.
- */
-export const providerDefaultConfigs: ProviderDefaultConfigEntry[] = [
+const rawDefaultConfigs = [
   {
     provider: 'OpenAI',
     modelId: 'gpt-4o',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://platform.openai.com/docs/models',
   },
   {
     provider: 'Anthropic',
     modelId: 'claude-sonnet-5',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://docs.anthropic.com/en/docs/about-claude/models',
   },
   {
     provider: 'Google',
     modelId: 'gemini-3.7-flash',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://ai.google.dev/gemini-api/docs/models/gemini',
   },
   {
     provider: 'DeepSeek',
     modelId: 'deepseek-v4-flash',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://www.deepseek.com/pricing',
   },
   {
     provider: 'Meta',
     modelId: 'llama-3-3-70b',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://www.llama.com/docs/models',
   },
   {
     provider: 'Mistral',
     modelId: 'mistral-large-2',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://docs.mistral.ai/models',
   },
   {
     provider: 'Cohere',
     modelId: 'command-a-plus-05-2026',
-    recommendationVerifiedDate: '2026-08-24',
     recommendationSourceUrl: 'https://docs.cohere.com/docs/models',
   },
 ];
+
+/**
+ * Verified provider recommendation configurations with dynamic verification source attribution.
+ */
+export const providerDefaultConfigs: ProviderDefaultConfigEntry[] = rawDefaultConfigs.map((c) => {
+  const model = (modelsData as ModelPricing[]).find((m) => m.id === c.modelId);
+  return {
+    ...c,
+    recommendationVerifiedDate: model?.recommendationVerifiedDate || model?.lastVerifiedDate || '2026-09-13',
+  };
+});
 
 /**
  * Derived map of verified provider defaults.

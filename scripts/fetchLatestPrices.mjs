@@ -17,6 +17,49 @@ if (IS_DRY_RUN) {
   console.log('🔍 DRY-RUN MODE ACTIVE: No file system changes will be persisted.');
 }
 
+const syncMetadataPath = path.resolve(__dirname, '../data/sync-metadata.json');
+
+function updateSyncMetadata({ status, modelsChecked = 0, modelsUpdated = 0, lastError = null }) {
+  const nowIso = new Date().toISOString();
+  let currentMetadata = {
+    lastAttemptAt: nowIso,
+    lastSuccessfulSyncAt: nowIso,
+    status: 'success',
+    modelsChecked: 0,
+    modelsUpdated: 0,
+    lastError: null,
+  };
+
+  try {
+    if (fs.existsSync(syncMetadataPath)) {
+      currentMetadata = JSON.parse(fs.readFileSync(syncMetadataPath, 'utf8'));
+    }
+  } catch {
+    // fallback
+  }
+
+  if (status === 'success') {
+    currentMetadata.lastAttemptAt = nowIso;
+    currentMetadata.lastSuccessfulSyncAt = nowIso;
+    currentMetadata.status = 'success';
+    currentMetadata.modelsChecked = modelsChecked;
+    currentMetadata.modelsUpdated = modelsUpdated;
+    currentMetadata.lastError = null;
+  } else {
+    currentMetadata.lastAttemptAt = nowIso;
+    currentMetadata.status = 'failed';
+    currentMetadata.lastError = lastError || 'Synchronization pipeline failed';
+    // IMPORTANT: lastSuccessfulSyncAt remains unchanged!
+  }
+
+  if (!IS_DRY_RUN) {
+    fs.writeFileSync(syncMetadataPath, JSON.stringify(currentMetadata, null, 2) + '\n', 'utf8');
+    console.log(`✓ Sync Metadata updated: status=${currentMetadata.status}, lastSuccessfulSyncAt=${currentMetadata.lastSuccessfulSyncAt}`);
+  } else {
+    console.log(`🔍 [DRY-RUN] Sync Metadata would be updated: status=${currentMetadata.status}`);
+  }
+}
+
 // 1. Fail-Closed Remote Fetch
 async function fetchLiveInternetPricing() {
   try {
@@ -34,6 +77,7 @@ async function fetchLiveInternetPricing() {
     return json.data;
   } catch (err) {
     console.error(`❌ FAIL-CLOSED: External provider pricing fetch failed: ${err.message}`);
+    updateSyncMetadata({ status: 'failed', lastError: err.message });
     process.exit(1);
   }
 }
@@ -138,8 +182,13 @@ async function runAutoIngestion() {
 
   // 4. Atomic Replace or No-Op Handling
   if (updatedCount === 0) {
-    console.log('\n[NO-OP] No meaningful pricing changes detected across provider catalogs.');
-    console.log('Existing verified dataset remains unchanged.');
+    console.log('\n[NO-OP] No pricing rate changes detected across provider catalogs.');
+    console.log('Updating sync metadata freshness timestamp without modifying data/models.json.');
+    updateSyncMetadata({
+      status: 'success',
+      modelsChecked: workingDataset.length,
+      modelsUpdated: 0,
+    });
     console.log('====================================================\n');
     process.exit(0);
   }
@@ -156,19 +205,35 @@ async function runAutoIngestion() {
     if (IS_DRY_RUN) {
       console.log('\n[DRY-RUN COMPLETE] Validation passed. Temporary dataset unlinked without replacing data/models.json.');
       fs.unlinkSync(tmpModelsPath);
+      updateSyncMetadata({
+        status: 'success',
+        modelsChecked: workingDataset.length,
+        modelsUpdated: updatedCount,
+      });
       process.exit(0);
     }
 
     // Atomic replace
     fs.renameSync(tmpModelsPath, modelsPath);
+    updateSyncMetadata({
+      status: 'success',
+      modelsChecked: workingDataset.length,
+      modelsUpdated: updatedCount,
+    });
     console.log('✓ Atomic Replacement: data/models.json successfully updated.');
     console.log('\nDisclaimer: The model dataset reflects pricing rates retrieved from configured API provider catalogs and official pricing documentation at the time of the latest successful automated daily sync and validation check.');
     console.log('====================================================\n');
-  } catch {
+  } catch (err) {
     console.error('\n❌ FAIL-CLOSED: Temporary dataset validation failed. Unlinking tmp file and failing workflow.');
     if (fs.existsSync(tmpModelsPath)) {
       fs.unlinkSync(tmpModelsPath);
     }
+    updateSyncMetadata({
+      status: 'failed',
+      modelsChecked: workingDataset.length,
+      modelsUpdated: 0,
+      lastError: err.message || 'Validation failed',
+    });
     process.exit(1);
   }
 }

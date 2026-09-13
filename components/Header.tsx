@@ -3,11 +3,13 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { getSyncFreshnessInfo } from '@/lib/pricing';
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const syncInfo = getSyncFreshnessInfo();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -88,9 +90,19 @@ export const Header: React.FC = () => {
 
           {/* Desktop CTA Badge */}
           <div className="hidden md:flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-950/30 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              2026 Live Rates
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold ${
+                syncInfo.status === 'failed'
+                  ? 'border-amber-500/30 bg-amber-950/30 text-amber-400'
+                  : 'border-emerald-500/20 bg-emerald-950/30 text-emerald-400'
+              }`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  syncInfo.status === 'failed' ? 'bg-amber-400' : 'bg-emerald-400 animate-pulse'
+                }`}
+              ></span>
+              {syncInfo.badgeLabel}
             </span>
           </div>
 
